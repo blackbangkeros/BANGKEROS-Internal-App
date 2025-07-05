@@ -1,271 +1,342 @@
-import React, { useState, useMemo } from 'react';
-import { LoaderCircle, FileText, FileSignature, FolderKanban, Sparkles, Copy, Check, PenSquare } from 'lucide-react';
-
-// Main App Component
-export default function App() {
-    // --- State Management ---
-    const [docType, setDocType] = useState('Policy');
-    const [userInput, setUserInput] = useState('');
-    const [generatedDoc, setGeneratedDoc] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isWhereasLoading, setIsWhereasLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [isCopied, setIsCopied] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [whereasInput, setWhereasInput] = useState('');
-    const [generatedWhereas, setGeneratedWhereas] = useState('');
-
-
-    // --- Document Type Configuration ---
-    const docTypes = [
-        { name: 'Policy', icon: <FileText /> },
-        { name: 'Resolution', icon: <FileSignature /> },
-        { name: 'Project', icon: <FolderKanban /> },
-    ];
-
-    const placeholderText = useMemo(() => {
-        switch (docType) {
-            case 'Policy':
-                return "e.g., A policy requiring first-aid kits on all tour boats.";
-            case 'Resolution':
-                return "e.g., A resolution to formally adopt the 'Luntian' mascot.";
-            case 'Project':
-                return "e.g., A project to install new Luntian-branded mooring buoys.";
-            default:
-                return "Enter your idea...";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BANGKEROS Centralized Monitoring System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Slate 100 */
         }
-    }, [docType]);
-
-    // --- Gemini API Call Handler ---
-    const callGeminiAPI = async (prompt) => {
-        try {
-            const apiKey = ""; // Canvas will provide this
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-            
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
-            
-            const result = await response.json();
-            
-            if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
-                return result.candidates[0].content.parts[0].text;
-            } else {
-                throw new Error("The AI could not generate a response. Please try rephrasing.");
-            }
-        } catch (err) {
-            console.error("Gemini API call failed:", err);
-            throw new Error("There was an error connecting to the AI assistant. Please try again.");
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
         }
-    };
+    </style>
+</head>
+<body class="antialiased text-gray-800">
 
-    const handleGenerate = async () => {
-        if (!userInput.trim()) {
-            setError('Please enter your idea or objective.');
-            return;
-        }
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="h-full flex flex-col">
+                <div class="h-20 flex items-center justify-center border-b">
+                    <img src="https://raw.githubusercontent.com/js-fan/logo-hosting/main/bangkeros_seal.png" alt="BANGKEROS Logo" class="h-12" onerror="this.onerror=null;this.src='https://placehold.co/150x50/ffffff/059669?text=BANGKEROS';">
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="#dashboard" class="flex items-center px-4 py-2 text-gray-700 bg-emerald-100 rounded-lg font-semibold">
+                        <svg class="w-5 h-5 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        Dashboard
+                    </a>
+                    <a href="#lts" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        LTS
+                    </a>
+                    <a href="#compliance" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                       <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Compliance
+                    </a>
+                     <a href="#financials" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                       <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        Financials
+                    </a>
+                </nav>
+            </div>
+        </aside>
 
-        setIsLoading(true);
-        setError('');
-        setGeneratedDoc('');
-        
-        let prompt = `You are an expert in Philippine cooperative governance and law (RA 9520), serving as a virtual administrative assistant for the BANGKEROS Cooperative in Port Barton, Palawan. You are deeply familiar with all BANGKEROS policies, including their Master Formulation and Documentation Policy (GOV-POL-002), their 9 Pillars of Development, their Luntian principles, and their specific document coding system. Your task is to generate a formal, well-structured document based on the user's request. Always use the official BANGKEROS header.
+        <!-- Main Content -->
+        <main class="flex-1 p-6 md:p-10">
+            <header class="mb-8" id="dashboard">
+                <h1 class="text-3xl font-bold text-gray-800">Centralized Monitoring Dashboard</h1>
+                <p class="text-gray-600 mt-1">Real-time overview of cooperative operations. Last updated: <span id="last-updated"></span></p>
+            </header>
 
-User's Request: "${userInput}"
-
-Generate the following document type: **${docType}**
-
-`;
-
-        switch (docType) {
-            case 'Policy':
-                prompt += `Structure the document as a formal cooperative policy. It must include the standard articles: Rationale and Purpose, Scope and Application, specific Policy Statements, Responsibilities, and Effectivity. Assign it an appropriate document code based on its likely category (e.g., OPS-POL-003).`;
-                break;
-            case 'Resolution':
-                prompt += `Structure the document as a formal cooperative board resolution. It must be presented as an "Excerpt from the Minutes" and include 'WHEREAS' clauses providing justification, and a 'NOW, THEREFORE, BE IT RESOLVED' clause stating the decision. Use the official BANGKEROS header and assign a resolution number (e.g., RES-2025-07101).`;
-                break;
-            case 'Project':
-                prompt += `Structure the document as a formal project proposal. The proposal must include the following sections: Rationale, Project Objectives, Project Description, Implementation Plan, and Budgetary Requirements. Frame it within the context of the BANGKEROS 9 Pillars of Development. Assign it a document code (e.g., PRJ-2025-004).`;
-                break;
-        }
-        
-        try {
-            const result = await callGeminiAPI(prompt);
-            setGeneratedDoc(result);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleGenerateWhereas = async () => {
-        if (!whereasInput.trim()) return;
-
-        setIsWhereasLoading(true);
-        setGeneratedWhereas('');
-        
-        const prompt = `You are an expert in Philippine cooperative governance. A user needs to write the justification (the 'WHEREAS' clauses) for a board resolution. The main decision of the resolution is: "${whereasInput}".
-
-Generate 3-4 distinct and logical 'WHEREAS' clauses that build a strong foundation for this decision. Each clause should start with "WHEREAS," and provide a clear reason, background, or legal basis. The tone should be formal and professional. Present them as a list.`;
-
-        try {
-            const result = await callGeminiAPI(prompt);
-            setGeneratedWhereas(result);
-        } catch (err) {
-            setGeneratedWhereas(`Error: ${err.message}`);
-        } finally {
-            setIsWhereasLoading(false);
-        }
-    };
-    
-    const handleCopy = (textToCopy) => {
-        if (!textToCopy) return;
-        const tempTextarea = document.createElement('textarea');
-        tempTextarea.value = textToCopy;
-        document.body.appendChild(tempTextarea);
-        tempTextarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempTextarea);
-        
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-    };
-
-    return (
-        <>
-            <div className="bg-slate-100 min-h-screen font-sans p-4 sm:p-6 md:p-8">
-                <div className="max-w-7xl mx-auto">
-                    <header className="text-center mb-10">
-                        <img src="https://raw.githubusercontent.com/js-fan/logo-hosting/main/bangkeros_seal.png" alt="BANGKEROS Logo" className="mx-auto mb-4 h-24 w-24" onError={e => e.target.style.display='none'}/>
-                        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 tracking-tight">BANGKEROS Document Generator</h1>
-                        <p className="text-lg text-slate-600 mt-2">Your AI-powered assistant for cooperative governance.</p>
-                    </header>
-
-                    <div className="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
-                        <div className="mb-6">
-                            <label className="block text-lg font-bold text-slate-700 mb-3">Step 1: Choose a document type</label>
-                            <div className="flex flex-wrap gap-3">
-                                {docTypes.map(type => (
-                                    <button
-                                        key={type.name}
-                                        onClick={() => setDocType(type.name)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 border-2 ${docType === type.name ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white text-slate-600 border-slate-300 hover:border-blue-500 hover:text-blue-600'}`}
-                                    >
-                                        {type.icon}
-                                        {type.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="mb-6">
-                            <label htmlFor="userInput" className="block text-lg font-bold text-slate-700 mb-3">Step 2: Describe what you need</label>
-                            <textarea
-                                id="userInput"
-                                rows="3"
-                                value={userInput}
-                                onChange={(e) => setUserInput(e.target.value)}
-                                className="w-full p-3 border-2 border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder={placeholderText}
-                            />
-                        </div>
-                        
-                        <div className="flex flex-col sm:flex-row gap-3">
-                             <button
-                                onClick={handleGenerate}
-                                disabled={isLoading}
-                                className="w-full flex-grow flex items-center justify-center gap-3 bg-blue-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl disabled:bg-slate-400 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? (<><LoaderCircle className="animate-spin" /><span>Generating...</span></>) : (<><Sparkles /><span>Generate Full Document</span></>)}
-                            </button>
-
-                             {docType === 'Resolution' && (
-                                <button
-                                    onClick={() => setIsModalOpen(true)}
-                                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-100 text-indigo-700 font-bold py-4 px-6 rounded-lg hover:bg-indigo-200 transition-colors border-2 border-indigo-200"
-                                >
-                                    <PenSquare />
-                                    <span>✨ WHEREAS Assistant</span>
-                                </button>
-                             )}
-                        </div>
-                         {error && <p className="text-red-600 mt-3 text-sm text-center">{error}</p>}
-                    </div>
-
-                    <div className="mt-10">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-4">Generated Document Draft</h2>
-                         <div className="relative">
-                            <pre className="bg-white p-6 rounded-lg border border-slate-200 shadow-inner whitespace-pre-wrap font-sans text-sm min-h-[200px] text-slate-800">
-                               {generatedDoc || "Your AI-generated document will appear here..."}
-                            </pre>
-                            {generatedDoc && (
-                                 <button 
-                                    onClick={() => handleCopy(generatedDoc)}
-                                    className="absolute top-3 right-3 bg-slate-200 hover:bg-slate-300 text-slate-700 p-2 rounded-md"
-                                    title="Copy to Clipboard"
-                                >
-                                    {isCopied ? <Check className="text-green-600" size={18}/> : <Copy size={18} />}
-                                </button>
-                            )}
-                         </div>
-                          <p className="text-xs text-slate-500 mt-2 text-center">Note: This is an AI-generated draft. Please review and finalize with the Board of Directors before adoption.</p>
-                    </div>
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-sm font-medium text-gray-500">Active Projects (LTS)</h3>
+                    <p class="text-3xl font-bold text-emerald-600" id="active-projects-count">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-sm font-medium text-gray-500">Compliance Alerts</h3>
+                    <p class="text-3xl font-bold text-red-600" id="compliance-alerts-count">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-sm font-medium text-gray-500">Guest Satisfaction</h3>
+                    <p class="text-3xl font-bold text-blue-600" id="guest-satisfaction-score">9.0/9</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-sm font-medium text-gray-500">Last Surprise Cash Count</h3>
+                    <p class="text-3xl font-bold text-gray-700" id="last-cash-count-date">N/A</p>
                 </div>
             </div>
 
-            {isModalOpen && (
-                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-2xl font-bold text-indigo-800 flex items-center gap-2"><PenSquare /> ✨ WHEREAS Clause Assistant</h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">&times;</button>
-                        </div>
-                        <p className="text-slate-600 mb-4">Enter the main point of your resolution (the "Resolved" part) to get help writing the justification.</p>
-                        
-                        <div>
-                            <label htmlFor="whereas-input" className="font-semibold text-slate-700">Main decision of the resolution:</label>
-                            <textarea 
-                                id="whereas-input" 
-                                rows="2"
-                                value={whereasInput}
-                                onChange={e => setWhereasInput(e.target.value)}
-                                className="w-full mt-2 p-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                placeholder="e.g., to approve the purchase of a new service vehicle"
-                            ></textarea>
-                            <button 
-                                onClick={handleGenerateWhereas}
-                                disabled={isWhereasLoading}
-                                className="w-full mt-4 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-slate-400"
-                            >
-                                {isWhereasLoading ? <LoaderCircle className="animate-spin mx-auto"/> : "Generate Justifications"}
-                            </button>
-                        </div>
+            <!-- Luntian Tracking System (LTS) -->
+            <section class="bg-white p-6 rounded-lg shadow-sm mb-8" id="lts">
+                <h2 class="text-xl font-bold mb-4">Luntian Tracking System (LTS)</h2>
+                <div class="mb-4">
+                    <input type="text" id="lts-search" placeholder="Search projects..." class="w-full md:w-1/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-xs text-gray-700 uppercase">
+                            <tr>
+                                <th class="px-6 py-3">Project / Concern</th>
+                                <th class="px-6 py-3">Person-in-Charge (PIC)</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3">Last Update</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lts-table-body">
+                            <!-- JS will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-                        {generatedWhereas && (
-                            <div className="mt-6">
-                                <hr className="my-4"/>
-                                <h4 className="font-semibold text-slate-700">AI-Generated Suggestions:</h4>
-                                <div className="relative mt-2 p-4 bg-slate-100 rounded-lg border text-slate-800 text-sm">
-                                    <pre className="whitespace-pre-wrap font-sans">{generatedWhereas}</pre>
-                                     <button 
-                                        onClick={() => handleCopy(generatedWhereas)}
-                                        className="absolute top-2 right-2 bg-slate-200 hover:bg-slate-300 text-slate-700 p-2 rounded-md"
-                                        title="Copy to Clipboard"
-                                    >
-                                        {isCopied ? <Check className="text-green-600" size={16}/> : <Copy size={16} />}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+            <!-- Regulatory Compliance Tracker -->
+            <section class="bg-white p-6 rounded-lg shadow-sm mb-8" id="compliance">
+                <h2 class="text-xl font-bold mb-4">MARINA Regulatory Compliance Tracker</h2>
+                 <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-xs text-gray-700 uppercase">
+                            <tr>
+                                <th class="px-6 py-3">Vessel Name</th>
+                                <th class="px-6 py-3">Certificate</th>
+                                <th class="px-6 py-3">Expiry Date</th>
+                                <th class="px-6 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compliance-table-body">
+                            <!-- JS will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Financials and Performance -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <section class="bg-white p-6 rounded-lg shadow-sm" id="financials">
+                     <h2 class="text-xl font-bold mb-4">Monthly Financial Snapshot</h2>
+                     <canvas id="financials-chart"></canvas>
+                </section>
+                 <section class="bg-white p-6 rounded-lg shadow-sm">
+                     <h2 class="text-xl font-bold mb-4">Internal Audit Log</h2>
+                     <ul class="space-y-4" id="audit-log">
+                        <!-- JS will populate -->
+                     </ul>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- MOCK DATA ---
+    // In a real application, this data would come from a database like Firebase.
+    const mockData = {
+        ltsProjects: [
+            { id: 'LTS-001', title: 'Luntian Genesis Reef - Pilot', pic: 'Luntian Committee', status: 'On Track', lastUpdate: '2025-07-03' },
+            { id: 'LTS-002', title: 'Aquaculture Farm Setup', pic: 'Fishermen Sector', status: 'On Track', lastUpdate: '2025-07-01' },
+            { id: 'LTS-003', title: 'Request for LGU Meeting', pic: 'Board Secretary', status: 'Completed', lastUpdate: '2025-06-28' },
+            { id: 'LTS-004', title: 'Q3 Training Plan (ATEP)', pic: 'Education Committee', status: 'Planning', lastUpdate: '2025-06-30' },
+            { id: 'LTS-005', title: 'Maiden Marshals Uniforms', pic: 'GAD Committee', status: 'Delayed', lastUpdate: '2025-06-25' },
+        ],
+        compliance: [
+            { vessel: 'MBCA Luntian I', certificate: 'Certificate of Public Convenience (CPC)', expiry: '2025-07-28' },
+            { vessel: 'MBCA Luntian II', certificate: 'Ship Safety Certificate', expiry: '2025-08-15' },
+            { vessel: 'MBCA Bayanihan', certificate: 'Certificate of Public Convenience (CPC)', expiry: '2026-01-10' },
+            { vessel: 'MBCA Luntian I', certificate: 'Ship Safety Certificate', expiry: '2025-07-20' },
+        ],
+        financials: {
+            revenue: 450000,
+            expenses: 320000,
+            netSurplus: 130000,
+        },
+        auditLog: [
+            { date: '2025-06-25', activity: 'Surprise cash count conducted on main office cashier.', finding: 'No discrepancies found.' },
+            { date: '2025-06-15', activity: 'Monthly Bank Reconciliation review.', finding: 'All accounts reconciled and approved.' },
+            { date: '2025-05-20', activity: 'Tour Provisions Spot-Check on MBCA Luntian II.', finding: 'Minor deviation on fruit presentation. Corrective action advised.' },
+        ],
+        guestSatisfaction: 8.8,
+        lastCashCount: '2025-06-25'
+    };
+
+    // --- RENDER FUNCTIONS ---
+
+    function renderLTS(projects) {
+        const tableBody = document.getElementById('lts-table-body');
+        tableBody.innerHTML = '';
+        projects.forEach(p => {
+            let statusClass = '';
+            let statusDotClass = '';
+            switch (p.status) {
+                case 'On Track': statusClass = 'text-green-800 bg-green-100'; statusDotClass = 'bg-green-500'; break;
+                case 'Delayed': statusClass = 'text-red-800 bg-red-100'; statusDotClass = 'bg-red-500'; break;
+                case 'Completed': statusClass = 'text-gray-800 bg-gray-100'; statusDotClass = 'bg-gray-500'; break;
+                case 'Planning': statusClass = 'text-blue-800 bg-blue-100'; statusDotClass = 'bg-blue-500'; break;
+            }
+            const row = `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">${p.title}</td>
+                    <td class="px-6 py-4">${p.pic}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 font-semibold leading-tight rounded-full ${statusClass}">
+                           <span class="status-dot ${statusDotClass}"></span> ${p.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">${p.lastUpdate}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function renderCompliance() {
+        const tableBody = document.getElementById('compliance-table-body');
+        tableBody.innerHTML = '';
+        const today = new Date();
+        let alerts = 0;
+
+        mockData.compliance.sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
+
+        mockData.compliance.forEach(c => {
+            const expiryDate = new Date(c.expiry);
+            const diffTime = expiryDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let statusText = `${diffDays} days remaining`;
+            let statusClass = 'text-green-800 bg-green-100';
+            if (diffDays <= 0) {
+                statusText = 'Expired';
+                statusClass = 'text-white bg-red-600';
+                alerts++;
+            } else if (diffDays <= 30) {
+                statusText = `Expires in ${diffDays} days`;
+                statusClass = 'text-red-800 bg-red-100';
+                alerts++;
+            } else if (diffDays <= 60) {
+                 statusText = `Expires in ${diffDays} days`;
+                statusClass = 'text-yellow-800 bg-yellow-100';
+            }
+
+            const row = `
+                 <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">${c.vessel}</td>
+                    <td class="px-6 py-4">${c.certificate}</td>
+                    <td class="px-6 py-4">${c.expiry}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 font-semibold leading-tight rounded-full ${statusClass}">
+                           ${statusText}
+                        </span>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+        document.getElementById('compliance-alerts-count').textContent = alerts;
+    }
+
+    function renderFinancialsChart() {
+        const ctx = document.getElementById('financials-chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Revenue', 'Expenses', 'Net Surplus'],
+                datasets: [{
+                    label: 'Amount (PHP)',
+                    data: [mockData.financials.revenue, mockData.financials.expenses, mockData.financials.netSurplus],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.2)', // Emerald
+                        'rgba(239, 68, 68, 0.2)',  // Red
+                        'rgba(59, 130, 246, 0.2)', // Blue
+                    ],
+                    borderColor: [
+                        'rgba(5, 150, 105, 1)',
+                        'rgba(220, 38, 38, 1)',
+                        'rgba(37, 99, 235, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return '₱' + new Intl.NumberFormat().format(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+    
+    function renderAuditLog() {
+        const logContainer = document.getElementById('audit-log');
+        logContainer.innerHTML = '';
+        mockData.auditLog.forEach(log => {
+            const item = `
+                <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                           <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </div>
                     </div>
-                 </div>
-            )}
-        </>
-    );
-}
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-900">${log.activity}</p>
+                        <p class="text-sm text-gray-500">${log.finding}</p>
+                        <p class="text-xs text-gray-400 mt-1">${log.date}</p>
+                    </div>
+                </li>
+            `;
+            logContainer.innerHTML += item;
+        });
+    }
+
+    // --- INITIALIZE DASHBOARD ---
+    
+    // Set last updated time
+    document.getElementById('last-updated').textContent = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' });
+
+    // Populate Key Metrics
+    document.getElementById('active-projects-count').textContent = mockData.ltsProjects.filter(p => p.status !== 'Completed').length;
+    document.getElementById('guest-satisfaction-score').textContent = `${mockData.guestSatisfaction}/9.0`;
+    document.getElementById('last-cash-count-date').textContent = mockData.lastCashCount;
+
+    // Render all sections
+    renderLTS(mockData.ltsProjects);
+    renderCompliance();
+    renderFinancialsChart();
+    renderAuditLog();
+    
+    // --- EVENT LISTENERS ---
+    const ltsSearchInput = document.getElementById('lts-search');
+    ltsSearchInput.addEventListener('keyup', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredProjects = mockData.ltsProjects.filter(p => 
+            p.title.toLowerCase().includes(searchTerm) || 
+            p.pic.toLowerCase().includes(searchTerm)
+        );
+        renderLTS(filteredProjects);
+    });
+});
+</script>
+
+</body>
+</html>
