@@ -163,12 +163,46 @@
             
             <!-- Content Panes -->
             <main class="flex-1 p-6 md:p-10 overflow-y-auto">
-                <!-- Dashboard Pane -->
                 <div id="dashboard-pane" class="content-pane">
-                     <!-- Content from previous version -->
+                    <!-- Key Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h3 class="text-sm font-medium text-gray-500">Active Projects (LTS)</h3>
+                            <p class="text-3xl font-bold text-emerald-600" id="active-projects-count">0</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h3 class="text-sm font-medium text-gray-500">Compliance Alerts</h3>
+                            <p class="text-3xl font-bold text-red-600" id="compliance-alerts-count">0</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h3 class="text-sm font-medium text-gray-500">Guest Satisfaction</h3>
+                            <p class="text-3xl font-bold text-blue-600" id="guest-satisfaction-score">9.0/9</p>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <h3 class="text-sm font-medium text-gray-500">Last Surprise Cash Count</h3>
+                            <p class="text-3xl font-bold text-gray-700" id="last-cash-count-date">N/A</p>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Row for CDC, Expenses, and Events -->
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm xl:col-span-1">
+                            <h2 class="text-xl font-bold mb-4">Top CDC Contributors</h2>
+                            <ul class="space-y-4" id="top-contributors-list"></ul>
+                        </div>
+                        <div class="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
+                                <h2 class="text-xl font-bold mb-4">Latest Expenses</h2>
+                                <ul class="space-y-4" id="latest-expenses-list"></ul>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
+                                <h2 class="text-xl font-bold mb-4">Upcoming Events</h2>
+                                <ul class="space-y-4" id="upcoming-events-list"></ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- NEW: General Membership Pane -->
                 <div id="membership-pane" class="content-pane active">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <!-- Left Column: Profile & Assets -->
@@ -195,9 +229,7 @@
                             <!-- Assets Card -->
                             <div class="bg-white p-6 rounded-lg shadow-sm">
                                 <h3 class="text-lg font-bold mb-4">My Assets</h3>
-                                <div class="space-y-3" id="member-assets-list">
-                                    <!-- JS will populate this -->
-                                </div>
+                                <div class="space-y-3" id="member-assets-list"></div>
                             </div>
 
                              <!-- Financial Summary Card -->
@@ -222,9 +254,7 @@
                              <!-- Queueing System Card -->
                             <div class="bg-white p-6 rounded-lg shadow-sm">
                                 <h3 class="text-lg font-bold mb-4">Live Queueing System</h3>
-                                <div id="queue-system">
-                                    <!-- JS will populate this -->
-                                </div>
+                                <div id="queue-system"></div>
                             </div>
 
                             <!-- Engagement Hub -->
@@ -242,18 +272,149 @@
                     </div>
                 </div>
 
-                <!-- Other Panes (BOD, Committees, etc.) -->
-                <div id="bod-pane" class="content-pane"></div>
-                <div id="committees-pane" class="content-pane"></div>
-                <div id="finance-pane" class="content-pane"></div>
-                <div id="hr-pane" class="content-pane"></div>
-                <div id="operations-pane" class="content-pane"></div>
-                <div id="digital-pane" class="content-pane"></div>
-                <div id="info-pane" class="content-pane"></div>
+                <div id="bod-pane" class="content-pane">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-bold mb-4">Board of Directors Governance</h2>
+                        <p class="text-gray-600 mb-4">Key responsibilities based on the Code of Good Governance.</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Set the cooperative's vision, mission, and strategic objectives.</li>
+                            <li>Formulate, approve, and ensure implementation of policies.</li>
+                            <li>Ensure financial sustainability by approving budgets and overseeing performance.</li>
+                            <li>Appoint and oversee the General Manager and other key officers.</li>
+                            <li>Ensure compliance with all applicable laws, rules, and regulations (R.A. 9520).</li>
+                            <li>Act at all times in the best interest of the general membership.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="committees-pane" class="content-pane">
+                     <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-bold mb-4">Committee Oversight</h2>
+                        <p class="text-gray-600 mb-6">All committees are governed by the Master Committee Charter and report to their respective accountability body. Use the forms below for official committee actions.</p>
+                        <div class="border-t pt-6">
+                            <h3 class="font-semibold text-lg text-gray-800 mb-4">Forms & Reporting</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <button onclick="showFormModal('form-incident-report')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Incident Report</button>
+                                <button onclick="showFormModal('form-gad-plan')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">GAD Plan & Budget</button>
+                                <button onclick="showFormModal('form-audit-plan')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Annual Audit Plan</button>
+                                <button onclick="showFormModal('form-coc')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Certificate of Candidacy</button>
+                                <button onclick="showFormModal('form-election-protest')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Election Protest</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="finance-pane" class="content-pane">
+                    <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
+                        <h2 class="text-xl font-bold mb-4">Financial Management</h2>
+                        <p class="text-gray-600 mb-4">Governed by the CASA Policy and General Accounting System Manual.</p>
+                         <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>All disbursements require approval based on the CASA matrix.</li>
+                            <li>All cash collections must be deposited intact daily.</li>
+                            <li>Bank accounts must be reconciled monthly by the 15th.</li>
+                            <li>Surprise cash counts are conducted monthly by the Audit Committee.</li>
+                        </ul>
+                         <div class="border-t pt-6 mt-6">
+                            <h3 class="font-semibold text-lg text-gray-800 mb-4">Forms & Reporting</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <button onclick="showFormModal('form-pr')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Purchase Request</button>
+                                <button onclick="showFormModal('form-dv')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Disbursement Voucher</button>
+                                <button onclick="showFormModal('form-ca')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Cash Advance</button>
+                                <button onclick="showFormModal('form-lr')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Liquidation Report</button>
+                                 <button onclick="showFormModal('form-cc')" class="p-4 bg-gray-100 rounded-lg text-center font-medium hover:bg-emerald-100 hover:text-emerald-800 transition">Cash Count Sheet</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <section class="bg-white p-6 rounded-lg shadow-sm">
+                             <h2 class="text-xl font-bold mb-4">Monthly Financial Snapshot</h2>
+                             <canvas id="financials-chart"></canvas>
+                        </section>
+                         <section class="bg-white p-6 rounded-lg shadow-sm">
+                             <h2 class="text-xl font-bold mb-4">Internal Audit Log</h2>
+                             <ul class="space-y-4" id="audit-log"></ul>
+                        </section>
+                    </div>
+                </div>
+
+                <div id="hr-pane" class="content-pane">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-bold mb-4">Human Resource Management</h2>
+                        <p class="text-gray-600 mb-4">Key policies for employees and officers.</p>
+                         <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Employee salaries are governed by the Salary Standardization Policy (SG system).</li>
+                            <li>Officer compensation (honorarium) must be approved by the General Assembly.</li>
+                            <li>Employee leave benefits include 10 days of convertible SIL per year.</li>
+                            <li>A formal grievance machinery and disciplinary procedure (due process) are in place.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="operations-pane" class="content-pane">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-bold mb-4">Operations Management</h2>
+                        <p class="text-gray-600 mb-4">Standards for all cooperative services, primarily the Sea Service & Safety Policy.</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Strict adherence to PCG's "No-Sail" Policy.</li>
+                            <li>Mandatory Passenger Manifest and Travel Voucher for every trip.</li>
+                            <li>The 9-Point Meal Standard and 9-Point Guest Briefing are mandatory for all tours.</li>
+                            <li>Strict enforcement of the Luntian Code of Conduct (No fish feeding, no touching corals).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="digital-pane" class="content-pane">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-bold mb-4">Digital BANGKEROS Department</h2>
+                        <p class="text-gray-600 mb-4">Leads the cooperative's digital transformation.</p>
+                        <div id="lts-section">
+                             <h3 class="font-semibold mb-2">Luntian Tracking System (LTS)</h3>
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-gray-50 text-xs text-gray-700 uppercase">
+                                        <tr>
+                                            <th class="px-6 py-3">Project / Concern</th>
+                                            <th class="px-6 py-3">PIC</th>
+                                            <th class="px-6 py-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lts-table-body-digital"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="compliance-section" class="mt-6">
+                            <h3 class="font-semibold mb-2">MARINA Compliance</h3>
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-gray-50 text-xs text-gray-700 uppercase">
+                                        <tr>
+                                            <th class="px-6 py-3">Vessel</th>
+                                            <th class="px-6 py-3">Certificate</th>
+                                            <th class="px-6 py-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="compliance-table-body-digital"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-pane" class="content-pane">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-bold mb-4">General Information</h2>
+                        <p class="text-gray-600 mb-4">Core identity of the BANGKEROS Cooperative.</p>
+                        <div class="space-y-4">
+                            <div><strong class="text-emerald-700">Vision:</strong> To be a premier tourist service provider renowned for sustainability, quality, and community engagement.</div>
+                            <div><strong class="text-emerald-700">Mission:</strong> To offer high-quality, safe experiences while promoting environmental responsibility.</div>
+                            <div><strong class="text-emerald-700">Guiding Principle:</strong> The "9th of BANGKEROS" - where Quality (Kalidad) is King and Justice (Katarungan) is the absolute Order.</div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
-    
+
     <!-- Modals and Templates remain the same as previous version -->
     <div id="form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 form-modal-container"></div>
     <div id="report-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 form-modal-container"></div>
@@ -274,7 +435,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- MOCK DATA ---
     const mockData = {
-        // ... (Dashboard data from previous version) ...
+        ltsProjects: [
+            { id: 'LTS-001', title: 'Luntian Genesis Reef - Pilot', pic: 'Luntian Committee', status: 'On Track' },
+            { id: 'LTS-002', title: 'Aquaculture Farm Setup', pic: 'Fishermen Sector', status: 'On Track' },
+            { id: 'LTS-003', title: 'Request for LGU Meeting', pic: 'Board Secretary', status: 'Completed' },
+        ],
+        compliance: [
+            { vessel: 'MBCA Luntian I', certificate: 'CPC', expiry: '2025-07-28' },
+            { vessel: 'MBCA Luntian II', certificate: 'PSSC', expiry: '2025-08-15' },
+        ],
+        financials: { revenue: 450000, expenses: 320000, netSurplus: 130000 },
+        auditLog: [
+            { date: '2025-06-25', activity: 'Surprise cash count on main cashier.', finding: 'No discrepancies.' },
+            { date: '2025-06-15', activity: 'Monthly Bank Reconciliation review.', finding: 'All accounts reconciled.' },
+        ],
+        guestSatisfaction: 8.8,
+        lastCashCount: '2025-06-25',
+        topContributors: [
+            { name: 'Juan Dela Cruz', amount: 12500, vessel: 'MBCA Luntian I' },
+            { name: 'Maria Santos', amount: 11800, vessel: 'MBCA Bayanihan' },
+            { name: 'Pedro Reyes', amount: 10500, vessel: 'MBCA Luntian II' },
+        ],
+        latestExpenses: [
+            { date: '2025-07-04', item: 'Fuel for Fleet (1 week)', amount: 45000 },
+            { date: '2025-07-02', item: 'Office Supplies & Printing', amount: 8500 },
+        ],
+        upcomingEvents: [
+            { date: '2025-07-14', time: '2:00 PM', event: 'Regular BOD Meeting' },
+            { date: '2025-07-20', time: '9:00 AM', event: 'Luntian Committee Planning' },
+        ],
         memberProfile: {
             name: 'Juan Dela Cruz',
             photo: 'https://placehold.co/80x80/059669/FFFFFF?text=JD',
@@ -313,19 +502,72 @@ document.addEventListener('DOMContentLoaded', function () {
                 { name: 'Ana Garcia', rank: 4 },
                 { name: 'Jose Rizal', rank: 5 },
             ],
-             upcomingEvents: [
-                { date: '2025-07-14', time: '2:00 PM', event: 'Regular BOD Meeting' },
-                { date: '2025-07-20', time: '9:00 AM', event: 'Luntian Committee Planning' },
-            ]
         }
     };
 
     // --- RENDER FUNCTIONS ---
-    function renderAll() {
-        // Renders for other panes can be added here if needed when they are active
+    function renderDashboard() {
+        // Key Metrics
+        document.getElementById('active-projects-count').textContent = mockData.ltsProjects.filter(p => p.status !== 'Completed').length;
+        document.getElementById('guest-satisfaction-score').textContent = `${mockData.guestSatisfaction}/9.0`;
+        document.getElementById('last-cash-count-date').textContent = mockData.lastCashCount;
+        let alerts = 0;
+        const today = new Date();
+        mockData.compliance.forEach(c => {
+            const diffDays = Math.ceil((new Date(c.expiry) - today) / (1000 * 60 * 60 * 24));
+            if (diffDays <= 30) alerts++;
+        });
+        document.getElementById('compliance-alerts-count').textContent = alerts;
+
+        // Top Contributors
+        const topContributorsList = document.getElementById('top-contributors-list');
+        topContributorsList.innerHTML = '';
+        const icons = ['🥇', '🥈', '🥉'];
+        mockData.topContributors.forEach((c, index) => {
+            topContributorsList.innerHTML += `
+                <li class="flex items-center">
+                    <span class="text-2xl mr-4 w-8 text-center">${icons[index] || '•'}</span>
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800">${c.name}</p>
+                        <p class="text-sm text-gray-500">${c.vessel}</p>
+                    </div>
+                    <p class="font-bold text-emerald-600">₱${new Intl.NumberFormat().format(c.amount)}</p>
+                </li>`;
+        });
+
+        // Latest Expenses
+        const latestExpensesList = document.getElementById('latest-expenses-list');
+        latestExpensesList.innerHTML = '';
+        mockData.latestExpenses.forEach(e => {
+            latestExpensesList.innerHTML += `
+                <li class="flex items-center border-b border-gray-100 pb-3">
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-800">${e.item}</p>
+                        <p class="text-xs text-gray-400">${e.date}</p>
+                    </div>
+                    <p class="font-semibold text-red-600">- ₱${new Intl.NumberFormat().format(e.amount)}</p>
+                </li>`;
+        });
+
+        // Upcoming Events
+        const upcomingEventsList = document.getElementById('upcoming-events-list');
+        upcomingEventsList.innerHTML = '';
+        mockData.upcomingEvents.forEach(e => {
+            const eventDate = new Date(e.date);
+            upcomingEventsList.innerHTML += `
+                <li class="flex items-center border-b border-gray-100 pb-3">
+                    <div class="bg-blue-100 text-blue-800 font-bold rounded-lg p-2 text-center mr-3">
+                        <p class="text-xs">${eventDate.toLocaleString('en-US', { month: 'short' })}</p>
+                        <p class="text-lg">${eventDate.getDate()}</p>
+                    </div>
+                    <div>
+                        <p class="font-medium text-sm">${e.event}</p>
+                        <p class="text-xs text-gray-500">${e.time}</p>
+                    </div>
+                </li>`;
+        });
     }
 
-    // --- NEW RENDER FUNCTIONS FOR MEMBERSHIP PANE ---
     function renderMemberProfile() {
         const profile = mockData.memberProfile;
         document.getElementById('member-name').textContent = profile.name;
@@ -358,24 +600,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                         <span class="text-xs font-semibold px-2 py-1 rounded-full ${statusClass}">${asset.status}</span>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     }
 
     function renderQueueSystem(profile) {
         const container = document.getElementById('queue-system');
         container.innerHTML = '';
-
         if (profile.queueTurn.isTurn) {
-            // Display passenger manifest and actions
             let passengerHtml = profile.queueTurn.passengers.map(p => `
                 <li class="flex justify-between items-center text-sm py-1">
                     <span>${p.name}</span>
                     <span class="text-gray-500">${p.nationality}</span>
-                </li>
-            `).join('');
-
+                </li>`).join('');
             container.innerHTML = `
                 <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-md">
                     <h4 class="font-bold text-lg text-emerald-800">It's Your Turn! (${profile.queueTurn.assetName})</h4>
@@ -387,16 +624,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         <button class="w-full py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">Accept Trip</button>
                         <button class="w-full py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Pass</button>
                     </div>
-                </div>
-            `;
+                </div>`;
         } else {
-            // Display normal queue status for all assets
             let queueHtml = profile.assets.map(asset => `
                 <div class="flex justify-between items-center py-2 border-b border-gray-100">
                     <p class="font-medium">${asset.name}</p>
                     <p class="text-gray-600">Position: <span class="font-bold text-blue-600">${asset.queuePosition}</span> / ${asset.queueTotal}</p>
-                </div>
-            `).join('');
+                </div>`).join('');
             container.innerHTML = queueHtml;
         }
     }
@@ -410,15 +644,14 @@ document.addEventListener('DOMContentLoaded', function () {
                  <li class="flex items-center text-sm">
                     <span class="text-xl mr-3 w-6 text-center">${icons[index]}</span>
                     <span class="font-medium">${c.name}</span>
-                </li>
-            `;
+                </li>`;
         });
     }
 
     function renderMemberEvents(events) {
         const list = document.getElementById('member-events-list');
         list.innerHTML = '';
-        events.forEach(e => {
+        mockData.upcomingEvents.forEach(e => {
             const eventDate = new Date(e.date);
             list.innerHTML += `
                 <li class="flex items-center">
@@ -430,11 +663,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         <p class="font-medium text-sm">${e.event}</p>
                         <p class="text-xs text-gray-500">${e.time}</p>
                     </div>
-                </li>
-            `;
+                </li>`;
         });
     }
-
 
     // --- NAVIGATION LOGIC ---
     mainNav.addEventListener('click', (e) => {
@@ -452,18 +683,17 @@ document.addEventListener('DOMContentLoaded', function () {
         
         pageTitle.textContent = targetLink.textContent.trim();
 
-        // Render content only when the pane is activated
-        if (targetPaneId === 'membership-pane') {
+        if (targetPaneId === 'dashboard-pane') {
+            renderDashboard();
+        } else if (targetPaneId === 'membership-pane') {
             renderMemberProfile();
         }
-        // Add similar conditions for other panes if they have dynamic content
     });
     
     // --- LOGIN/LOGOUT LOGIC ---
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
-        // Simulate fetching profile based on login
         if (username.startsWith('juan')) {
             profileName.textContent = 'Juan Dela Cruz';
             document.querySelector('#profile-btn img').src = 'https://placehold.co/40x40/059669/FFFFFF?text=JD';
@@ -476,8 +706,8 @@ document.addEventListener('DOMContentLoaded', function () {
         mainApp.classList.remove('hidden');
         mainApp.classList.add('flex');
         
-        // Initial render for the active pane
-        renderMemberProfile();
+        // Default to My Profile page after login
+        mainNav.querySelector('a[href="#membership"]').click();
     });
 
     logoutBtn.addEventListener('click', () => {
@@ -489,9 +719,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('password').value = 'password';
     });
     
-    // --- FORM MODAL LOGIC (remains the same) ---
-    // ... (All form modal JS from previous version) ...
-
 });
 </script>
 
