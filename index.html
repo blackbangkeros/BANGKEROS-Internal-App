@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital BANGKEROS - Centralized Monitoring App</title>
+    <title>Digital BANGKEROS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -691,45 +691,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     // --- LOGIN/LOGOUT LOGIC ---
-    // Inside the <script> tag in your index.html
-
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('username').value;
-
-    try {
-        // Call our Netlify function
-        const response = await fetch('/.netlify/functions/getProfile', {
-            method: 'POST',
-            body: JSON.stringify({ email: email })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to get profile');
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        if (username.startsWith('juan')) {
+            profileName.textContent = 'Juan Dela Cruz';
+            document.querySelector('#profile-btn img').src = 'https://placehold.co/40x40/059669/FFFFFF?text=JD';
+        } else {
+             profileName.textContent = 'Moises Cabungan';
+             document.querySelector('#profile-btn img').src = 'https://placehold.co/40x40/059669/FFFFFF?text=MC';
         }
-
-        const userProfileData = await response.json();
-
-        // Use the real data from the database
-        renderMemberProfile(userProfileData); // We'll create this function next
 
         loginPage.classList.add('hidden');
         mainApp.classList.remove('hidden');
         mainApp.classList.add('flex');
-
-    } catch (error) {
-        console.error(error);
-        alert('Error: Could not find user profile.');
-    }
-});
-
-// Modify the renderMemberProfile function to accept data
-function renderMemberProfile(profile) {
-    // The existing render logic goes here, but it uses the 'profile' object
-    // instead of mockData.memberProfile
-    document.getElementById('member-name').textContent = `${profile.first_name} ${profile.last_name}`;
-    // ... and so on for all other fields.
-}
         
         // Default to My Profile page after login
         mainNav.querySelector('a[href="#membership"]').click();
@@ -749,3 +724,5 @@ function renderMemberProfile(profile) {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
