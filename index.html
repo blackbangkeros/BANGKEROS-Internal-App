@@ -312,62 +312,44 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // --- PAGE ELEMENTS ---
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
     const loginPage = document.getElementById('login-page');
     const mainApp = document.getElementById('main-app');
-    const loginForm = document.getElementById('login-form');
-    const logoutBtn = document.getElementById('logout-btn');
-    const mainNav = document.getElementById('main-nav');
-    const pageTitle = document.getElementById('page-title');
-    const contentPanes = document.querySelectorAll('.content-pane');
-    const profileName = document.getElementById('profile-name');
-    
-    // --- BOD PANE ELEMENTS ---
-    const bodPane = document.getElementById('bod-pane');
-    const bodPolicyView = document.getElementById('bod-policy-view');
-    const bodGeneratorView = document.getElementById('bod-generator-view');
-    const bodAckCheckbox = document.getElementById('bod-ack-checkbox');
-    const proceedToToolsBtn = document.getElementById('proceed-to-tools-btn');
-    const backToPoliciesBtn = document.getElementById('back-to-policies-btn');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('toggle-password');
 
-    // --- GENERATOR ELEMENTS ---
-    const genModeBtn = document.getElementById('gen-mode-btn');
-    const meetingModeBtn = document.getElementById('meeting-mode-btn');
-    const proposalHelperBtn = document.getElementById('proposal-helper-btn');
-    const genModeContent = document.getElementById('generator-mode-content');
-    const meetingModeContent = document.getElementById('meeting-mode-content');
-    const proposalHelperContent = document.getElementById('proposal-helper-content');
-    const generateDocBtn = document.getElementById('generate-doc-btn');
-    const proposalForm = document.getElementById('proposal-form');
-    const docOutputModal = document.getElementById('doc-output-modal');
-    const docOutputBody = document.getElementById('doc-output-body');
-    const docModalCloseBtn = document.getElementById('doc-modal-close-btn');
-    const docOkBtn = document.getElementById('doc-ok-btn');
-    const docCopyBtn = document.getElementById('doc-copy-btn');
-    const meetingTranscript = document.getElementById('meeting-transcript');
-    const aiSuggestions = document.getElementById('ai-suggestions');
-    const ltsMeetingView = document.getElementById('lts-meeting-view');
-    
-    loginForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const username = loginForm.username.value.trim();
-        const password = loginForm.password.value;
-
-        const res = await fetch('http://localhost:3001/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            // Optionally, change the icon here
         });
-        const data = await res.json();
-        if (data.success) {
-            loginError.classList.add('hidden');
-            loginPage.classList.add('hidden');
-            mainApp.classList.remove('hidden');
-            // Optionally set user info
-        } else {
-            loginError.textContent = data.message || "Invalid username or password.";
-            loginError.classList.remove('hidden');
-        }
-    });
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const username = loginForm.username.value.trim();
+            const password = loginForm.password.value;
+
+            if (!username || !password) {
+                loginError.textContent = "Please enter both username and password.";
+                loginError.classList.remove('hidden');
+                return;
+            }
+
+            // TODO: Replace with real backend authentication
+            if (username === "chairperson@bangkeros.coop" && password === "password") {
+                loginError.classList.add('hidden');
+                loginPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+            } else {
+                loginError.textContent = "Invalid username or password.";
+                loginError.classList.remove('hidden');
+            }
+        });
+    }
 
     // --- LOGOUT FUNCTIONALITY ---
     logoutBtn.addEventListener('click', function () {
@@ -490,10 +472,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Login logic
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('toggle-password');
-
     // Signup logic
     const showSignupBtn = document.getElementById('show-signup');
     const signupModal = document.getElementById('signup-modal');
@@ -539,27 +517,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
-    // Signup form submit
-    if (signupForm) {
-        signupForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const username = signupForm['signup-username'].value.trim();
-            const password = signupForm['signup-password'].value;
-            const fullname = signupForm['signup-fullname'].value.trim();
-
-            // TODO: Replace with real backend signup logic
-            if (username && password && fullname) {
-                signupError.classList.add('hidden');
-                signupModal.classList.add('hidden');
-                alert('Signup successful! You can now log in.');
-            } else {
-                signupError.textContent = "All fields are required.";
-                signupError.classList.remove('hidden');
-            }
-        });
-    }
-
 });
 </script>
     <div id="form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 form-modal-container"></div>
