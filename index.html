@@ -12,13 +12,6 @@
             font-family: 'Inter', sans-serif;
             background-color: #f1f5f9; /* Slate 100 */
         }
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
         .nav-link {
             display: flex;
             align-items: center;
@@ -51,18 +44,25 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .form-modal-container {
-            background-color: rgba(0, 0, 0, 0.5);
+        .modal-container {
+            background-color: rgba(0, 0, 0, 0.6);
             transition: opacity 0.3s ease;
         }
-        .form-modal-content {
-            transition: transform 0.3s ease;
+        /* For AI Generator */
+        .ai-suggestion {
+            animation: slideInUp 0.5s ease-out;
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gemini-button {
+            background: linear-gradient(to right, #4c82fb, #2dd4bf);
         }
     </style>
 </head>
 <body class="antialiased text-gray-800">
 
-    <!-- Login Page -->
     <div id="login-page" class="flex items-center justify-center min-h-screen bg-gray-100">
         <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
             <div class="text-center">
@@ -88,45 +88,31 @@
         </div>
     </div>
 
-    <!-- Main App Container (Initially hidden) -->
     <div id="main-app" class="min-h-screen flex hidden">
-        <!-- Sidebar -->
         <aside class="w-64 bg-white shadow-lg flex-shrink-0 flex flex-col">
             <div class="h-20 flex items-center justify-center border-b-2 border-gray-100">
                 <img src="https://raw.githubusercontent.com/js-fan/logo-hosting/main/bangkeros_seal.png" alt="BANGKEROS Logo" class="h-14" onerror="this.onerror=null;this.src='https://placehold.co/150x50/ffffff/059669?text=BANGKEROS';">
             </div>
             <nav id="main-nav" class="flex-1 p-4 space-y-1">
-                <a href="#dashboard" class="nav-link active">
+                <a href="#dashboard" class="nav-link">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     Dashboard
                 </a>
-                <a href="#bod" class="nav-link">
+                <a href="#membership" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    My Profile
+                </a>
+                <a href="#compliance" class="nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.417l4.5-4.5M12 14a3 3 0 100-6 3 3 0 000 6z"></path></svg>
+                    Compliance
+                </a>
+                <a href="#bod" class="nav-link active">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Board of Directors
                 </a>
                 <a href="#committees" class="nav-link">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     All Committees
-                </a>
-                <a href="#finance" class="nav-link">
-                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                    Finance Management
-                </a>
-                <a href="#hr" class="nav-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2"></path></svg>
-                    HR Management
-                </a>
-                <a href="#operations" class="nav-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Operations Mgt.
-                </a>
-                <a href="#digital" class="nav-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
-                    Digital BANGKEROS
-                </a>
-                <a href="#info" class="nav-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    General Information
                 </a>
             </nav>
             <div class="mt-auto p-4 border-t-2 border-gray-100">
@@ -137,11 +123,9 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <div class="flex-1 flex flex-col">
-            <!-- Top Bar with User Profile -->
             <header class="h-20 bg-white shadow-sm flex items-center justify-between px-6 md:px-10 flex-shrink-0">
-                <h1 id="page-title" class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                <h1 id="page-title" class="text-2xl font-bold text-gray-800">Board of Directors</h1>
                 <div class="relative">
                     <button id="profile-btn" class="flex items-center space-x-3">
                         <span id="profile-name" class="font-semibold text-gray-700 text-right hidden md:block"></span>
@@ -150,63 +134,110 @@
                 </div>
             </header>
             
-            <!-- Content Panes -->
-            <main class="flex-1 p-6 md:p-10 overflow-y-auto">
-                <div id="dashboard-pane" class="content-pane active">
-                    <!-- Key Metrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <main id="main-content" class="flex-1 p-6 md:p-10 overflow-y-auto">
+                <div id="dashboard-pane" class="content-pane"></div>
+                <div id="membership-pane" class="content-pane"></div>
+                <div id="compliance-pane" class="content-pane"></div>
+                
+                <div id="bod-pane" class="content-pane active">
+                    <div id="bod-policy-view">
                         <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h3 class="text-sm font-medium text-gray-500">Active Projects (LTS)</h3>
-                            <p class="text-3xl font-bold text-emerald-600" id="active-projects-count">0</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h3 class="text-sm font-medium text-gray-500">Compliance Alerts</h3>
-                            <p class="text-3xl font-bold text-red-600" id="compliance-alerts-count">0</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h3 class="text-sm font-medium text-gray-500">Guest Satisfaction</h3>
-                            <p class="text-3xl font-bold text-blue-600" id="guest-satisfaction-score">9.0/9</p>
-                        </div>
-                         <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h3 class="text-sm font-medium text-gray-500">Last Surprise Cash Count</h3>
-                            <p class="text-3xl font-bold text-gray-700" id="last-cash-count-date">N/A</p>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Guiding Policies for the Board</h2>
+                            <p class="text-gray-600 mb-6">Before using the governance tools, please review the key policies that govern the duties and responsibilities of the Board of Directors.</p>
+                            <div class="space-y-4 text-sm p-4 bg-gray-50 rounded-lg border">
+                                <div>
+                                    <h3 class="font-bold text-gray-700">Code of Good Governance (Policy No. 06310-RS2025)</h3>
+                                    <ul class="list-disc list-inside ml-4 text-gray-600">
+                                        <li>The Board is responsible for strategic direction, policy formulation, and financial oversight.</li>
+                                        <li>Individual directors have a duty of care, loyalty, and obedience to the cooperative.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-700">Master Formulation & Documentation Policy (GOV-POL-002)</h3>
+                                    <ul class="list-disc list-inside ml-4 text-gray-600">
+                                        <li>All new policies and resolutions must follow the official formulation procedures.</li>
+                                        <li>All documents must use the standard cooperative coding and numbering system.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                             <div class="mt-6 flex items-center">
+                                <input id="bod-ack-checkbox" type="checkbox" class="h-4 w-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                                <label for="bod-ack-checkbox" class="ml-2 block text-sm text-gray-900">I have reviewed the guiding policies.</label>
+                            </div>
+                            <div class="mt-4 text-right">
+                                <button id="proceed-to-tools-btn" class="px-6 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Proceed to Governance Tools
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dashboard Row for CDC, Expenses, and Events -->
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-                        <div class="bg-white p-6 rounded-lg shadow-sm xl:col-span-1">
-                            <h2 class="text-xl font-bold mb-4">Top CDC Contributors</h2>
-                            <ul class="space-y-4" id="top-contributors-list"></ul>
+                    <div id="bod-generator-view" class="hidden">
+                         <button id="back-to-policies-btn" class="mb-4 px-4 py-2 bg-gray-200 text-sm font-medium rounded-lg hover:bg-gray-300">&larr; Back to Policies</button>
+                         <div class="flex space-x-4 border-b mb-6">
+                            <button id="gen-mode-btn" class="py-2 px-4 font-semibold border-b-2 border-emerald-500 text-emerald-600">✨ AI Document Generator</button>
+                            <button id="meeting-mode-btn" class="py-2 px-4 font-semibold text-gray-500 border-b-2 border-transparent">✨ AI Live Meeting Mode</button>
+                            <button id="proposal-helper-btn" class="py-2 px-4 font-semibold text-gray-500 border-b-2 border-transparent">✨ AI Proposal Helper</button>
                         </div>
-                        <div class="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        
+                        <div id="generator-mode-content">
                             <div class="bg-white p-6 rounded-lg shadow-sm">
-                                <h2 class="text-xl font-bold mb-4">Latest Expenses</h2>
-                                <ul class="space-y-4" id="latest-expenses-list"></ul>
+                                <h2 class="text-xl font-bold mb-4">Luntian AI Document Generator</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="doc-type" class="block text-sm font-medium text-gray-700">1. Select Document Type</label>
+                                        <select id="doc-type" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                            <option>Resolution</option>
+                                            <option>Policy</option>
+                                            <option>Project Proposal</option>
+                                        </select>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="doc-prompt" class="block text-sm font-medium text-gray-700">2. Describe the document you need</label>
+                                        <textarea id="doc-prompt" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm" placeholder="Example: 'A resolution appointing Juan Dela Cruz as the new head of the Luntian Committee.'"></textarea>
+                                    </div>
+                                </div>
+                                <div class="text-right mt-4">
+                                    <button id="generate-doc-btn" class="gemini-button inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                                        ✨ Generate with Gemini
+                                    </button>
+                                </div>
                             </div>
+                        </div>
+                        
+                        <div id="meeting-mode-content" class="hidden">
+                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                                    <h2 class="text-xl font-bold mb-4">Live Meeting Assistant</h2>
+                                    <label for="meeting-transcript" class="block text-sm font-medium text-gray-700">Meeting Transcript (Simulated)</label>
+                                    <textarea id="meeting-transcript" rows="10" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" placeholder="As topics are typed here, the AI assistant will provide suggestions..."></textarea>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <h3 class="text-lg font-bold mb-2">Luntian AI Assistant</h3>
+                                        <div id="ai-suggestions" class="space-y-3 text-sm">
+                                            <p class="text-gray-500">Suggestions will appear here...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        
+                        <div id="proposal-helper-content" class="hidden">
                             <div class="bg-white p-6 rounded-lg shadow-sm">
-                                <h2 class="text-xl font-bold mb-4">Upcoming Events</h2>
-                                <ul class="space-y-4" id="upcoming-events-list"></ul>
+                                <h2 class="text-xl font-bold mb-4">AI Project Proposal Helper</h2>
+                                <form id="proposal-form" class="space-y-4">
+                                    <div><label class="block text-sm font-medium">Project Title</label><input type="text" name="proj_title" class="w-full mt-1 border-gray-300 rounded-md" placeholder="e.g., Luntian Coastal Clean-up 2025"></div>
+                                    <div><label class="block text-sm font-medium">Rationale (Why is this needed?)</label><textarea name="proj_rationale" rows="3" class="w-full mt-1 border-gray-300 rounded-md"></textarea></div>
+                                    <div><label class="block text-sm font-medium">Objectives (What will it achieve?)</label><textarea name="proj_objectives" rows="3" class="w-full mt-1 border-gray-300 rounded-md"></textarea></div>
+                                    <div class="text-right">
+                                        <button type="submit" class="gemini-button inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white">✨ Draft Proposal with Gemini</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div id="bod-pane" class="content-pane">
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <h2 class="text-xl font-bold mb-4">Board of Directors Governance</h2>
-                        <p class="text-gray-600 mb-4">Key responsibilities based on the Code of Good Governance.</p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
-                            <li>Set the cooperative's vision, mission, and strategic objectives.</li>
-                            <li>Formulate, approve, and ensure implementation of policies.</li>
-                            <li>Ensure financial sustainability by approving budgets and overseeing performance.</li>
-                            <li>Appoint and oversee the General Manager and other key officers.</li>
-                            <li>Ensure compliance with all applicable laws, rules, and regulations (R.A. 9520).</li>
-                            <li>Act at all times in the best interest of the general membership.</li>
-                        </ul>
-                    </div>
-                </div>
-
                 <div id="committees-pane" class="content-pane">
                      <div class="bg-white p-6 rounded-lg shadow-sm">
                         <h2 class="text-xl font-bold mb-4">Committee Oversight</h2>
@@ -477,6 +508,257 @@ document.addEventListener('DOMContentLoaded', function () {
     const reportModalCloseBtn = document.getElementById('report-modal-close-btn');
     const reportModalOkBtn = document.getElementById('report-modal-ok-btn');
 
+    // --- BOD PANE ELEMENTS ---
+    const bodPane = document.getElementById('bod-pane');
+    const bodPolicyView = document.getElementById('bod-policy-view');
+    const bodGeneratorView = document.getElementById('bod-generator-view');
+    const bodAckCheckbox = document.getElementById('bod-ack-checkbox');
+    const proceedToToolsBtn = document.getElementById('proceed-to-tools-btn');
+    const backToPoliciesBtn = document.getElementById('back-to-policies-btn');
+
+    // --- GENERATOR ELEMENTS ---
+    const genModeBtn = document.getElementById('gen-mode-btn');
+    const meetingModeBtn = document.getElementById('meeting-mode-btn');
+    const proposalHelperBtn = document.getElementById('proposal-helper-btn');
+    const genModeContent = document.getElementById('generator-mode-content');
+    const meetingModeContent = document.getElementById('meeting-mode-content');
+    const proposalHelperContent = document.getElementById('proposal-helper-content');
+    const generateDocBtn = document.getElementById('generate-doc-btn');
+    const proposalForm = document.getElementById('proposal-form');
+    const docOutputModal = document.getElementById('doc-output-modal');
+    const docOutputBody = document.getElementById('doc-output-body');
+    const docModalCloseBtn = document.getElementById('doc-modal-close-btn');
+    const docOkBtn = document.getElementById('doc-ok-btn');
+    const docCopyBtn = document.getElementById('doc-copy-btn');
+    const meetingTranscript = document.getElementById('meeting-transcript');
+    const aiSuggestions = document.getElementById('ai-suggestions');
+    const ltsMeetingView = document.getElementById('lts-meeting-view');
+
+ // --- MOCK DATA (abbreviated) ---
+    const mockData = { 
+        ltsProjects: [
+            { title: 'Luntian Genesis Reef - Pilot', status: 'On Track' },
+            { title: 'Aquaculture Farm Setup', status: 'On Track' },
+            { title: 'Maiden Marshals Uniforms', status: 'Delayed' },
+        ]
+    };
+    
+    // --- RENDER FUNCTIONS (abbreviated) ---
+    function renderMemberProfile() { /* ... */ }
+
+    // --- GENERATOR FUNCTIONS ---
+    function switchGeneratorMode(mode) {
+        const buttons = [genModeBtn, meetingModeBtn, proposalHelperBtn];
+        const contents = [genModeContent, meetingModeContent, proposalHelperContent];
+        
+        buttons.forEach(btn => btn.classList.remove('border-emerald-500', 'text-emerald-600'));
+        contents.forEach(content => content.classList.add('hidden'));
+
+        if (mode === 'meeting') {
+            meetingModeBtn.classList.add('border-emerald-500', 'text-emerald-600');
+            meetingModeContent.classList.remove('hidden');
+            renderLTSForMeeting();
+        } else if (mode === 'proposal') {
+            proposalHelperBtn.classList.add('border-emerald-500', 'text-emerald-600');
+            proposalHelperContent.classList.remove('hidden');
+        } else {
+            genModeBtn.classList.add('border-emerald-500', 'text-emerald-600');
+            genModeContent.classList.remove('hidden');
+        }
+    }
+
+    // --- GEMINI API INTEGRATION ---
+    async function callGeminiAPI(prompt) {
+        const apiKey = ""; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: [{
+                role: "user",
+                parts: [{ text: prompt }]
+            }]
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API call failed with status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                return "Error: Could not generate a valid response from the AI.";
+            }
+        } catch (error) {
+            console.error("Gemini API Error:", error);
+            return `Error: Could not connect to the AI service. Details: ${error.message}`;
+        }
+    }
+
+    async function handleGenerateDocument() {
+        const docType = document.getElementById('doc-type').value;
+        const userPrompt = document.getElementById('doc-prompt').value;
+        if (!userPrompt) {
+            alert('Please describe the document you need.');
+            return;
+        }
+        
+        generateDocBtn.disabled = true;
+        generateDocBtn.innerHTML = 'Generating...';
+
+        const bangkerosContext = `
+            You are an AI assistant for the BANGKEROS Cooperative's Board of Directors. Your task is to generate official documents. All documents must adhere to the following key policies:
+            - Master Formulation and Documentation Policy (GOV-POL-002): All documents must have a proper code/number.
+            - Policy Formulation Procedure (06201-RS2025): Policies must have a standard structure (Rationale, Scope, etc.).
+            - Resolution Formulation Procedure (06202-RS2025): Resolutions must have WHEREAS clauses and a RESOLVED clause.
+            - Code of Good Governance (06310-RS2025): All actions must be in the best interest of the general membership.
+            - The 9th of BANGKEROS (06402-R-S2025): The ultimate principles are Quality (Kalidad) and Justice (Katarungan).
+            
+            Based on this context, please generate a formal and professional '${docType}' document for the following user request: "${userPrompt}"
+        `;
+
+        const generatedText = await callGeminiAPI(bangkerosContext);
+        
+        docOutputBody.innerHTML = `<pre class="whitespace-pre-wrap text-sm">${generatedText}</pre>`;
+        docOutputModal.classList.remove('hidden');
+        docOutputModal.classList.add('flex');
+        generateDocBtn.disabled = false;
+        generateDocBtn.innerHTML = '✨ Generate with Gemini';
+    }
+
+    async function handleProposalFormSubmit(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const title = formData.get('proj_title');
+        const rationale = formData.get('proj_rationale');
+        const objectives = formData.get('proj_objectives');
+        
+        if (!title || !rationale || !objectives) {
+            alert('Please fill out all fields for the proposal.');
+            return;
+        }
+
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Drafting...';
+
+        const proposalPrompt = `
+            As an AI assistant for the BANGKEROS Cooperative, create a formal Project Proposal document. The proposal must be aligned with the cooperative's 9 Pillars of Development.
+            
+            Use the following details provided by the user:
+            - Project Title: ${title}
+            - Rationale (Why it's needed): ${rationale}
+            - Objectives (What it will achieve): ${objectives}
+            
+            Structure the proposal with the following sections: 1.0 RATIONALE, 2.0 PROJECT OBJECTIVES, 3.0 ALIGNMENT WITH 9 PILLARS, 4.0 PROPOSED BUDGET (use placeholder values), 5.0 CONCLUSION.
+            Make it sound professional, persuasive, and ready for submission to a funding agency.
+        `;
+
+        const generatedText = await callGeminiAPI(proposalPrompt);
+
+        docOutputBody.innerHTML = `<pre class="whitespace-pre-wrap text-sm">${generatedText}</pre>`;
+        docOutputModal.classList.remove('hidden');
+        docOutputModal.classList.add('flex');
+        submitButton.disabled = false;
+        submitButton.innerHTML = '✨ Draft Proposal with Gemini';
+    }
+
+    async function handleMeetingTranscriptInput() {
+        const text = meetingTranscript.value;
+        if (text.length < 50 || text.endsWith(' ') === false) return; // Only call API on pause
+
+        const meetingPrompt = `
+            You are an AI assistant for the BANGKEROS Cooperative board meeting. Based on the following transcript excerpt, identify key topics and suggest relevant policies or action items. Be concise.
+            Transcript: "${text}"
+        `;
+        
+        const suggestions = await callGeminiAPI(meetingPrompt);
+        aiSuggestions.innerHTML = `<div class="ai-suggestion bg-blue-50 p-3 rounded-lg"><p class="font-semibold">AI Assistant:</p><p>${suggestions.replace(/\n/g, '<br>')}</p></div>`;
+    }
+
+    function renderLTSForMeeting() {
+        if(!ltsMeetingView || !mockData.ltsProjects) return;
+        ltsMeetingView.innerHTML = '';
+        mockData.ltsProjects.forEach(p => {
+            const statusColor = p.status === 'Delayed' ? 'text-red-500' : 'text-green-500';
+            ltsMeetingView.innerHTML += `<div class="flex justify-between items-center"><p>${p.title}</p><p class="font-semibold ${statusColor}">${p.status}</p></div>`;
+        });
+    }
+
+    // --- EVENT LISTENERS ---
+    mainNav.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetLink = e.target.closest('.nav-link');
+        if (!targetLink) return;
+        mainNav.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        targetLink.classList.add('active');
+        const targetPaneId = targetLink.getAttribute('href').substring(1) + '-pane';
+        contentPanes.forEach(pane => {
+            pane.classList.toggle('active', pane.id === targetPaneId);
+        });
+        pageTitle.textContent = targetLink.textContent.trim();
+        if (targetPaneId === 'bod-pane') {
+            bodPolicyView.classList.remove('hidden');
+            bodGeneratorView.classList.add('hidden');
+            bodAckCheckbox.checked = false;
+            proceedToToolsBtn.disabled = true;
+        }
+    });
+    
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        profileName.textContent = document.getElementById('username').value.split('@')[0].replace(/\b\w/g, l => l.toUpperCase());
+        loginPage.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+        mainApp.classList.add('flex');
+        mainNav.querySelector('a[href="#bod"]').click();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        mainApp.classList.add('hidden');
+        mainApp.classList.remove('flex');
+        loginPage.classList.remove('hidden');
+    });
+    
+    // --- BOD PANE LISTENERS ---
+    bodAckCheckbox.addEventListener('change', () => {
+        proceedToToolsBtn.disabled = !bodAckCheckbox.checked;
+    });
+    proceedToToolsBtn.addEventListener('click', () => {
+        bodPolicyView.classList.add('hidden');
+        bodGeneratorView.classList.remove('hidden');
+        switchGeneratorMode('generator');
+    });
+    backToPoliciesBtn.addEventListener('click', () => {
+        bodGeneratorView.classList.add('hidden');
+        bodPolicyView.classList.remove('hidden');
+    });
+
+    // --- GENERATOR EVENT LISTENERS ---
+    genModeBtn.addEventListener('click', () => switchGeneratorMode('generator'));
+    meetingModeBtn.addEventListener('click', () => switchGeneratorMode('meeting'));
+    proposalHelperBtn.addEventListener('click', () => switchGeneratorMode('proposal'));
+    generateDocBtn.addEventListener('click', handleGenerateDocument);
+    proposalForm.addEventListener('submit', handleProposalFormSubmit);
+    docModalCloseBtn.addEventListener('click', () => docOutputModal.classList.add('hidden'));
+    docOkBtn.addEventListener('click', () => docOutputModal.classList.add('hidden'));
+    docCopyBtn.addEventListener('click', () => {
+        const textToCopy = docOutputBody.querySelector('pre')?.innerText || docOutputBody.innerText;
+        navigator.clipboard.writeText(textToCopy);
+        alert('Document text copied to clipboard!');
+    });
+    meetingTranscript.addEventListener('input', handleMeetingTranscriptInput);
+
+});
     // --- MOCK DATA ---
     const mockData = {
         ltsProjects: [
