@@ -70,14 +70,22 @@
                 <h1 class="mt-4 text-2xl font-bold text-gray-900">Digital BANGKEROS Portal</h1>
                 <p class="text-sm text-gray-600">Please sign in to continue</p>
             </div>
-            <form id="login-form" class="space-y-6">
+            <form id="login-form" class="space-y-6" autocomplete="off">
+                <div id="login-error" class="hidden text-red-600 text-sm text-center"></div>
                 <div>
                     <label for="username" class="text-sm font-medium text-gray-700">Username</label>
-                    <input id="username" name="username" type="text" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" value="chairperson@bangkeros.coop">
+                    <input id="username" name="username" type="text" required autocomplete="username" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" aria-label="Username">
                 </div>
                 <div>
                     <label for="password" class="text-sm font-medium text-gray-700">Password</label>
-                    <input id="password" name="password" type="password" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" value="password">
+                    <div class="relative">
+                        <input id="password" name="password" type="password" required autocomplete="current-password" class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 pr-10" aria-label="Password">
+                        <button type="button" id="toggle-password" tabindex="-1" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-700" aria-label="Show password">
+                            <svg id="eye-icon" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0c0 3.866-3.582 7-8 7s-8-3.134-8-7 3.582-7 8-7 8 3.134 8 7z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <button type="submit" class="w-full px-4 py-2 font-semibold text-white bg-emerald-600 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
@@ -85,6 +93,43 @@
                     </button>
                 </div>
             </form>
+            <div class="text-center">
+                <span class="text-gray-500 text-sm">Don't have an account?</span>
+                <button id="show-signup" class="text-emerald-600 hover:underline text-sm font-medium ml-1">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-8 space-y-6 mx-auto mt-20">
+            <div class="text-center">
+                <h2 class="text-xl font-bold text-gray-900">Create an Account</h2>
+                <p class="text-sm text-gray-600">Sign up to access the Digital BANGKEROS Portal</p>
+            </div>
+            <form id="signup-form" class="space-y-5" autocomplete="off">
+                <div id="signup-error" class="hidden text-red-600 text-sm text-center"></div>
+                <div>
+                    <label for="signup-username" class="text-sm font-medium text-gray-700">Username</label>
+                    <input id="signup-username" name="signup-username" type="text" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" aria-label="Username">
+                </div>
+                <div>
+                    <label for="signup-password" class="text-sm font-medium text-gray-700">Password</label>
+                    <input id="signup-password" name="signup-password" type="password" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" aria-label="Password">
+                </div>
+                <div>
+                    <label for="signup-fullname" class="text-sm font-medium text-gray-700">Full Name</label>
+                    <input id="signup-fullname" name="signup-fullname" type="text" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500" aria-label="Full Name">
+                </div>
+                <div>
+                    <button type="submit" class="w-full px-4 py-2 font-semibold text-white bg-emerald-600 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+            <div class="text-center">
+                <button id="close-signup" class="text-gray-500 hover:text-gray-700 text-sm mt-2">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -301,7 +346,220 @@ document.addEventListener('DOMContentLoaded', function () {
     const meetingTranscript = document.getElementById('meeting-transcript');
     const aiSuggestions = document.getElementById('ai-suggestions');
     const ltsMeetingView = document.getElementById('lts-meeting-view');
-    // Modals and Templates remain the same as previous version
+    
+    loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const username = loginForm.username.value.trim();
+        const password = loginForm.password.value;
+
+        const res = await fetch('http://localhost:3001/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+            loginError.classList.add('hidden');
+            loginPage.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            // Optionally set user info
+        } else {
+            loginError.textContent = data.message || "Invalid username or password.";
+            loginError.classList.remove('hidden');
+        }
+    });
+
+    // --- LOGOUT FUNCTIONALITY ---
+    logoutBtn.addEventListener('click', function () {
+        loginPage.classList.remove('hidden');
+        mainApp.classList.add('hidden');
+    });
+
+    // --- NAVIGATION ---
+    mainNav.addEventListener('click', function (e) {
+        if (e.target.matches('.nav-link')) {
+            const targetPane = e.target.getAttribute('href').substring(1);
+            contentPanes.forEach(pane => {
+                pane.classList.remove('active');
+                if (pane.id === targetPane) {
+                    pane.classList.add('active');
+                }
+            });
+            pageTitle.textContent = e.target.textContent.trim();
+        }
+    });
+
+    // --- BOD POLICY VIEW / GENERATOR TOGGLE ---
+    bodAckCheckbox.addEventListener('change', function () {
+        proceedToToolsBtn.disabled = !this.checked;
+    });
+
+    proceedToToolsBtn.addEventListener('click', function () {
+        bodPolicyView.classList.add('hidden');
+        bodGeneratorView.classList.remove('hidden');
+    });
+
+    backToPoliciesBtn.addEventListener('click', function () {
+        bodGeneratorView.classList.add('hidden');
+        bodPolicyView.classList.remove('hidden');
+    });
+
+    // --- GENERATOR MODE SELECTION ---
+    genModeBtn.addEventListener('click', function () {
+        genModeBtn.classList.add('border-emerald-500', 'text-emerald-600');
+        meetingModeBtn.classList.remove('border-emerald-500', 'text-emerald-600');
+        proposalHelperBtn.classList.remove('border-emerald-500', 'text-emerald-600');
+        genModeContent.classList.remove('hidden');
+        meetingModeContent.classList.add('hidden');
+        proposalHelperContent.classList.add('hidden');
+    });
+
+    meetingModeBtn.addEventListener('click', function () {
+        genModeBtn.classList.remove('border-emerald-500', 'text-emerald-600');
+        meetingModeBtn.classList.add('border-emerald-500', 'text-emerald-600');
+        proposalHelperBtn.classList.remove('border-emerald-500', 'text-emerald-600');
+        genModeContent.classList.add('hidden');
+        meetingModeContent.classList.remove('hidden');
+        proposalHelperContent.classList.add('hidden');
+    });
+
+    proposalHelperBtn.addEventListener('click', function () {
+        genModeBtn.classList.remove('border-emerald-500', 'text-emerald-600');
+        meetingModeBtn.classList.remove('border-emerald-500', 'text-emerald-600');
+        proposalHelperBtn.classList.add('border-emerald-500', 'text-emerald-600');
+        genModeContent.classList.add('hidden');
+        meetingModeContent.classList.add('hidden');
+        proposalHelperContent.classList.remove('hidden');
+    });
+
+    // --- DOCUMENT GENERATION ---
+    generateDocBtn.addEventListener('click', async function () {
+        const docType = document.getElementById('doc-type').value;
+        const docPrompt = document.getElementById('doc-prompt').value;
+
+        // Simulate document generation
+        setTimeout(() => {
+            docOutputBody.innerHTML = `<pre class="text-sm text-gray-800">${docPrompt}</pre>`;
+            docOutputModal.classList.remove('hidden');
+        }, 1000);
+    });
+
+    // --- DOCUMENT MODAL BUTTONS ---
+    docModalCloseBtn.addEventListener('click', function () {
+        docOutputModal.classList.add('hidden');
+    });
+
+    docOkBtn.addEventListener('click', function () {
+        docOutputModal.classList.add('hidden');
+    });
+
+    docCopyBtn.addEventListener('click', function () {
+        const docText = docOutputBody.innerText;
+        navigator.clipboard.writeText(docText).then(() => {
+            alert('Document text copied to clipboard!');
+        });
+    });
+
+    // --- AI MEETING TRANSCRIPT SIMULATION ---
+    meetingTranscript.addEventListener('input', function () {
+        const transcriptText = meetingTranscript.value;
+        aiSuggestions.innerHTML = ''; // Clear previous suggestions
+
+        // Simulate AI suggestions
+        if (transcriptText) {
+            setTimeout(() => {
+                aiSuggestions.innerHTML = `<div class="ai-suggestion p-2 bg-green-50 rounded-md">
+                    <strong>AI Suggestion:</strong> Consider adding more details to this section.
+                </div>`;
+            }, 500);
+        }
+    });
+
+    // --- PROFILE MENU ---
+    const profileBtn = document.getElementById('profile-btn');
+    const profileMenu = document.getElementById('profile-menu');
+
+    profileBtn.addEventListener('click', function () {
+        profileMenu.classList.toggle('hidden');
+    });
+
+    // Close profile menu if clicked outside
+    document.addEventListener('click', function (e) {
+        if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+            profileMenu.classList.add('hidden');
+        }
+    });
+
+    // Login logic
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('toggle-password');
+
+    // Signup logic
+    const showSignupBtn = document.getElementById('show-signup');
+    const signupModal = document.getElementById('signup-modal');
+    const closeSignupBtn = document.getElementById('close-signup');
+    const signupForm = document.getElementById('signup-form');
+    const signupError = document.getElementById('signup-error');
+
+    // Show/hide password
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function () {
+            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+        });
+    }
+
+    // Show signup modal
+    if (showSignupBtn) {
+        showSignupBtn.addEventListener('click', function () {
+            signupModal.classList.remove('hidden');
+        });
+    }
+    // Close signup modal
+    if (closeSignupBtn) {
+        closeSignupBtn.addEventListener('click', function () {
+            signupModal.classList.add('hidden');
+        });
+    }
+
+    // Login form submit
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const username = loginForm.username.value.trim();
+            const password = loginForm.password.value;
+
+            // TODO: Replace with real backend authentication
+            if (username === "chairperson@bangkeros.coop" && password === "password") {
+                loginError.classList.add('hidden');
+                loginPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+            } else {
+                loginError.textContent = "Invalid username or password.";
+                loginError.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Signup form submit
+    if (signupForm) {
+        signupForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const username = signupForm['signup-username'].value.trim();
+            const password = signupForm['signup-password'].value;
+            const fullname = signupForm['signup-fullname'].value.trim();
+
+            // TODO: Replace with real backend signup logic
+            if (username && password && fullname) {
+                signupError.classList.add('hidden');
+                signupModal.classList.add('hidden');
+                alert('Signup successful! You can now log in.');
+            } else {
+                signupError.textContent = "All fields are required.";
+                signupError.classList.remove('hidden');
+            }
+        });
+    }
+
 });
 </script>
     <div id="form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 form-modal-container"></div>
