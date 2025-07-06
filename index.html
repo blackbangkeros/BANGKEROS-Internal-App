@@ -517,6 +517,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Signup form submit
+    if (signupForm) {
+        signupForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const username = signupForm['signup-username'].value.trim();
+            const password = signupForm['signup-password'].value;
+            const fullname = signupForm['signup-fullname'].value.trim();
+
+            // TODO: Replace with real backend signup logic
+            if (username && password && fullname) {
+                signupError.classList.add('hidden');
+                signupModal.classList.add('hidden');
+                alert('Signup successful! You can now log in.');
+            } else {
+                signupError.textContent = "All fields are required.";
+                signupError.classList.remove('hidden');
+            }
+        });
+    }
+
 });
 </script>
     <div id="form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 form-modal-container"></div>
