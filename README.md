@@ -1,2 +1,2 @@
-# BANGKEROS-Internal-App
-Governance and Operation App
+# BANGKEROS Shop
+Bangkeros Business Operation App
